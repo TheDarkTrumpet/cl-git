@@ -21,13 +21,15 @@
     (loop for x = (read-char-no-hang stream nil nil) while x do
 	 (format out "~a" x))))
 
-;cd into repository
+; cd into repository
+; Error is : "can't cd to ...." <-- do a regexp on this.
+; Success is nothing...that doesn't help.
 (defun cd-into-repo (instream outstream repodir) 
   (format instream "cd ~a~%" repodir)
   (format t "executed cd..~%")
   (force-output instream)
   (format t "forced output .. ~%")
-  (format t "Output: ~a~%" (get-from-shell outstream))
+  ;(format t "Output: ~a~%" (get-from-shell outstream))
   (format t "output given..~%"))
 
 ;Wrapper for the actual git command.
@@ -41,15 +43,7 @@
   (let* ((stream (sb-ext:run-program "/bin/sh" () :output :stream :input :stream :search t :wait nil))
 	 (input (sb-ext:process-input stream))
 	 (output (sb-ext:process-output stream)))
-    (format t "Entering cd..~%")
-    (format input "cd~%")
-    (format t "executed cd..~%")
-    (force-output input)
-    (format t "forced output .. ~%")
-    (format t "Output: ~a~%" (get-from-shell output))
-    (format t "output given..~%")
-    ;(cd-into-repo input output repodir)
-    (format t "Entering exec-git~%")
-;    (exec-git-cmd input output cmd)
+    (cd-into-repo input output repodir)
+    (exec-git-cmd input output cmd)
     (format input "exit~%")
     (force-output input)))
