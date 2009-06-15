@@ -3,6 +3,6 @@
 
 (in-package #:cl-user)
 
-(asdf:defsystem :git-interface
-  :components ((:file "git-interface"))
+(asdf:defsystem :cl-gitinterface
+  :components ((:file "cl-gitinterface"))
   :depends-on (:cl-ppcre))

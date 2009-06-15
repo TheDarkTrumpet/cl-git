@@ -1,8 +1,8 @@
 ; To run:
-; (require 'git-interface)
-; (in-package :git-interface)
+; (require :cl-gitinterface)
+; (in-package :cl-gitinterface)
 
-(defpackage :git-interface
+(defpackage :cl-gitinterface
   (:use :cl :cl-ppcre))
 
 (in-package :git-interface)
