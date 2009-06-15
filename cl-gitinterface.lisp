@@ -9,10 +9,14 @@
 
 ;Listen on a stream to for when input comes along.
 (defun probe-stream (stream)
-  (loop 
-     (when (listen stream)
-       (return)))
-  )
+  (let ((breakme 0))
+    (loop 
+       (when (listen stream)
+	 (return))
+       (when (> breakme 100)
+	 (error 'break-limit-reached "Time limit reached"))
+       (incf breakme))
+    ))
 
 ;Grab the contents from a shell 
 (defun get-from-shell (stream)
