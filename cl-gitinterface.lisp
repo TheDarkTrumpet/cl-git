@@ -5,7 +5,7 @@
 (defpackage :cl-gitinterface
   (:use :cl :cl-ppcre))
 
-(in-package :git-interface)
+(in-package :cl-gitinterface)
 
 ;Listen on a stream to for when input comes along.
 (defun probe-stream (stream)
@@ -22,17 +22,21 @@
 	 (format out "~a" x))))
 
 ;cd into repository
-(defun cd-into-repo (stream repodir) 
-  (format stream "cd ~a~%" repodir))
+(defun cd-into-repo (instream outstream repodir) 
+  (format instream "cd ~a~%" repodir)
+  (force-output instream)
+  (format t "Output: ~a~%" (get-from-shell outstream)))
 
 ;Wrapper for the actual git command.
-(defun exec-git-cmd (stream cmd)
-  (format stream "git ~a~%" cmd))
+(defun exec-git-cmd (instream outstream cmd)
+  (format instream "git ~a~%" cmd)
+  (force-output instream)
+  (format t "Output: ~a~%" (get-from-shell outstream)))
 
 ;What the users of this library will use.
 (defun run-git-cmd (repodir cmd)
   (let* ((stream (sb-ext:run-program "sh" () :output :stream :input :stream :search t :wait nil))
 	 (input (sb-ext:process-input stream))
 	 (output (sb-ext:process-output stream)))
-    (cd-into-repo input repodir)
-    (exec-git-cmd input cmd)))
+    (cd-into-repo input output repodir)
+    (exec-git-cmd input output cmd)))
