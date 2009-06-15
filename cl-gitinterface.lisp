@@ -24,8 +24,11 @@
 ;cd into repository
 (defun cd-into-repo (instream outstream repodir) 
   (format instream "cd ~a~%" repodir)
+  (format t "executed cd..~%")
   (force-output instream)
-  (format t "Output: ~a~%" (get-from-shell outstream)))
+  (format t "forced output .. ~%")
+  (format t "Output: ~a~%" (get-from-shell outstream))
+  (format t "output given..~%"))
 
 ;Wrapper for the actual git command.
 (defun exec-git-cmd (instream outstream cmd)
@@ -35,8 +38,18 @@
 
 ;What the users of this library will use.
 (defun run-git-cmd (repodir cmd)
-  (let* ((stream (sb-ext:run-program "sh" () :output :stream :input :stream :search t :wait nil))
+  (let* ((stream (sb-ext:run-program "/bin/sh" () :output :stream :input :stream :search t :wait nil))
 	 (input (sb-ext:process-input stream))
 	 (output (sb-ext:process-output stream)))
-    (cd-into-repo input output repodir)
-    (exec-git-cmd input output cmd)))
+    (format t "Entering cd..~%")
+    (format input "cd~%")
+    (format t "executed cd..~%")
+    (force-output input)
+    (format t "forced output .. ~%")
+    (format t "Output: ~a~%" (get-from-shell output))
+    (format t "output given..~%")
+    ;(cd-into-repo input output repodir)
+    (format t "Entering exec-git~%")
+;    (exec-git-cmd input output cmd)
+    (format input "exit~%")
+    (force-output input)))
