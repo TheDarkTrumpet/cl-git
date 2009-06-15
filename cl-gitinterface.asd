@@ -5,4 +5,4 @@
 
 (asdf:defsystem :cl-gitinterface
   :components ((:file "cl-gitinterface"))
-  :depends-on (:cl-ppcre))
+  :depends-on (:cl-ppcre :local-time))

@@ -3,7 +3,7 @@
 ; (in-package :cl-gitinterface)
 
 (defpackage :cl-gitinterface
-  (:use :cl :cl-ppcre))
+  (:use :cl :cl-ppcre :local-time))
 
 (in-package :cl-gitinterface)
 
