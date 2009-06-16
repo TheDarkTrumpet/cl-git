@@ -7,6 +7,15 @@
 
 (in-package :cl-gitinterface)
 
+
+;Available git commands and their associated 
+
+(defparameter *git-commands* (make-hash-table 
+			      :pull (make-hash-table 
+				     :failure "")
+			      :push (make-hash-table
+				     :failure ".*?rejected.*")))
+			      
 ;Listen on a stream to for when input comes along.
 (defun probe-stream (stream)
   (let ((break-limit (timestamp-to-unix (now))))
@@ -37,17 +46,18 @@
   (format t "output given..~%"))
 
 ;Wrapper for the actual git command.
-(defun exec-git-cmd (instream outstream cmd)
+(defun exec-git-cmd (instream outstream errstream cmd args)
   (format instream "git ~a~%" cmd)
   (force-output instream)
   (format t "Output: ~a~%" (get-from-shell outstream)))
 
 ;What the users of this library will use.
-(defun run-git-cmd (repodir cmd)
+(defun git (repodir cmd args)
   (let* ((stream (sb-ext:run-program "/bin/sh" () :output :stream :input :stream :search t :wait nil))
 	 (input (sb-ext:process-input stream))
-	 (output (sb-ext:process-output stream)))
+	 (output (sb-ext:process-output stream))
+	 (err (sb-ext:process-error stream)))
     (cd-into-repo input output repodir)
-    (exec-git-cmd input output cmd)
+    (exec-git-cmd input output err cmd args)
     (format input "exit~%")
     (force-output input)))
