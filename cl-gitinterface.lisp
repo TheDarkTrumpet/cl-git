@@ -9,13 +9,13 @@
 
 ;Listen on a stream to for when input comes along.
 (defun probe-stream (stream)
-  (let ((breakme 0))
+  (let ((break-limit (timestamp-to-unix (now))))
     (loop 
        (when (listen stream)
 	 (return))
-       (when (> breakme 100)
+       (when (> (- (timestamp-to-unix (now)) break-limit) 1)
 	 (error 'break-limit-reached "Time limit reached"))
-       (incf breakme))
+       )
     ))
 
 ;Grab the contents from a shell 
