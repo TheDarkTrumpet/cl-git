@@ -33,6 +33,12 @@
 (setf (gethash :failurereg (gethash :remote-add *git-commands*)) ".*?fatal: remote origin already exists.*")
 (setf (gethash :errortype (gethash :remote-add *git-commands*)) 'git-remote-add-error)
 
+;Clone
+(setf (gethash :clone *git-commands*) (make-hash-table))
+(setf (gethash :failurereg (gethash :clone *git-commands*)) ".*?fatal:.*")
+(setf (gethash :errortype (gethash :clone *git-commands*)) 'git-clone-error)
+
+
 ;Listen on a stream to for when input comes along.
 (defun probe-stream (stream)
   (let ((break-limit (timestamp-to-unix (now))))

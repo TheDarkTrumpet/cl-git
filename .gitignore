@@ -1,3 +1,4 @@
 # Default stuff for ignoring...
 *~
 *#
+*.fasl
