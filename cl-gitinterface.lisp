@@ -34,7 +34,7 @@
     (loop 
        (when (listen stream)
 	 (return))
-       (when (> (- (timestamp-to-unix (now)) break-limit) 10)
+       (when (> (- (timestamp-to-unix (now)) break-limit) 60)
 	 (error 'break-limit-reached "Time limit reached"))
        )
     ))
@@ -59,9 +59,12 @@
 
 ;Wrapper for the actual git command.
 (defun exec-git-cmd (instream outstream cmd args)
-  (format instream "git ~a ~a~%" (string-downcase (symbol-name cmd)) args)
-  (force-output instream)
-  (format t "Output: ~a~%" (get-from-shell outstream)))
+  (if (not (eql (gethash cmd *git-commands*) nil))
+      (progn
+	(format instream "git ~a ~a~%" (string-downcase (symbol-name cmd)) args)
+	(force-output instream)
+	(format t "Output: ~a~%" (get-from-shell outstream)))
+      (error 'invalid-git-command)))
 
 ;What the users of this library will use.
 (defun git (repodir cmd &optional (args ""))
