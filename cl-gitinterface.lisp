@@ -28,6 +28,11 @@
 (setf (gethash :failurereg (gethash :commit *git-commands*)) ".*?fatal: cannot do a partial commit during a merge.*")
 (setf (gethash :errortype (gethash :commit *git-commands*)) 'git-commit-error)
 
+;Remote Add
+(setf (gethash :remote-add *git-commands*) (make-hash-table))
+(setf (gethash :failurereg (gethash :remote-add *git-commands*)) ".*?fatal: remote origin already exists.*")
+(setf (gethash :errortype (gethash :remote-add *git-commands*)) 'git-remote-add-error)
+
 ;Listen on a stream to for when input comes along.
 (defun probe-stream (stream)
   (let ((break-limit (timestamp-to-unix (now))))
