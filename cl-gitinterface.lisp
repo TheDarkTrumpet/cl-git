@@ -10,12 +10,24 @@
 
 ;Available git commands and their associated 
 
-(defparameter *git-commands* (make-hash-table 
-			      :pull (make-hash-table 
-				     :failure "")
-			      :push (make-hash-table
-				     :failure ".*?rejected.*")))
-			      
+;Empty Hash Table.
+(setf *git-commands* (make-hash-table))
+
+;Pull Command.
+(setf (gethash :pull *git-commands*) (make-hash-table))
+(setf (gethash :failurereg (gethash :pull *git-commands*)) ".*?Automatic merge failed; fix conflicts and then commit the result.*")
+(setf (gethash :errortype (gethash :pull *git-commands*)) 'git-merge-conflict)
+
+;Push Command.
+(setf (gethash :push *git-commands*) (make-hash-table))
+(setf (gethash :failurereg (gethash :push *git-commands*)) ".*?error: failed to push some refs.*")
+(setf (gethash :errortype (gethash :push *git-commands*)) 'git-push-conflict)
+
+;Commit Command
+(setf (gethash :commit *git-commands*) (make-hash-table))
+(setf (gethash :failurereg (gethash :commit *git-commands*)) ".*?fatal: cannot do a partial commit during a merge.*")
+(setf (gethash :errortype (gethash :commit *git-commands*)) 'git-commit-error)
+
 ;Listen on a stream to for when input comes along.
 (defun probe-stream (stream)
   (let ((break-limit (timestamp-to-unix (now))))
@@ -46,8 +58,8 @@
   (format t "output given..~%"))
 
 ;Wrapper for the actual git command.
-(defun exec-git-cmd (instream outstream errstream cmd args)
-  (format instream "git ~a~%" cmd)
+(defun exec-git-cmd (instream outstream cmd args)
+  (format instream "git ~a ~a~%" cmd args)
   (force-output instream)
   (format t "Output: ~a~%" (get-from-shell outstream)))
 
@@ -55,9 +67,8 @@
 (defun git (repodir cmd args)
   (let* ((stream (sb-ext:run-program "/bin/sh" () :output :stream :input :stream :search t :wait nil))
 	 (input (sb-ext:process-input stream))
-	 (output (sb-ext:process-output stream))
-	 (err (sb-ext:process-error stream)))
+	 (output (sb-ext:process-output stream)))
     (cd-into-repo input output repodir)
-    (exec-git-cmd input output err cmd args)
+    (exec-git-cmd input output cmd args)
     (format input "exit~%")
     (force-output input)))
