@@ -34,7 +34,7 @@
     (loop 
        (when (listen stream)
 	 (return))
-       (when (> (- (timestamp-to-unix (now)) break-limit) 1)
+       (when (> (- (timestamp-to-unix (now)) break-limit) 10)
 	 (error 'break-limit-reached "Time limit reached"))
        )
     ))
@@ -59,15 +59,15 @@
 
 ;Wrapper for the actual git command.
 (defun exec-git-cmd (instream outstream cmd args)
-  (format instream "git ~a ~a~%" cmd args)
+  (format instream "git ~a ~a~%" (string-downcase (symbol-name cmd)) args)
   (force-output instream)
   (format t "Output: ~a~%" (get-from-shell outstream)))
 
 ;What the users of this library will use.
-(defun git (repodir cmd args)
+(defun git (repodir cmd &optional (args ""))
   (let* ((stream (sb-ext:run-program "/bin/sh" () :output :stream :input :stream :search t :wait nil))
 	 (input (sb-ext:process-input stream))
-	 (output (sb-ext:process-output stream)))
+	 (output (sb-ext:process-output stream))) 
     (cd-into-repo input output repodir)
     (exec-git-cmd input output cmd args)
     (format input "exit~%")
