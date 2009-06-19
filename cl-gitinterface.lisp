@@ -11,7 +11,7 @@
 ;Available git commands and their associated 
 
 ;Empty Hash Table.
-(setf *git-commands* (make-hash-table))
+(defvar *git-commands* (make-hash-table))
 
 ;Pull Command.
 (setf (gethash :pull *git-commands*) (make-hash-table))
@@ -74,7 +74,9 @@
       (progn
 	(format instream "git ~a ~a~%" (string-downcase (symbol-name cmd)) args)
 	(force-output instream)
-	(format t "Output: ~a~%" (get-from-shell outstream)))
+	(let ((x (get-from-shell outstream)))
+	  (if (eql (scan (gethash :failurereg (gethash cmd *git-commands*)) x) nil)
+	      (error (gethash :errortype (gethash cmd *git-commands*)) :text x))))
       (error 'invalid-git-command)))
 
 ;What the users of this library will use.
