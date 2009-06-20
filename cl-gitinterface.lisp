@@ -38,6 +38,10 @@
 (setf (gethash :failurereg (gethash :clone *git-commands*)) ".*?fatal:.*")
 (setf (gethash :errortype (gethash :clone *git-commands*)) 'git-clone-error)
 
+;Status
+(setf (gethash :status *git-commands*) (make-hash-table))
+(setf (gethash :failurereg (gethash :status *git-commands*)) ".*?fatal:.*")
+(setf (gethash :errortype (gethash :status *git-commands*)) 'git-status-error)
 
 ;Listen on a stream to for when input comes along.
 (defun probe-stream (stream)
@@ -79,11 +83,16 @@
 	      (error (gethash :errortype (gethash cmd *git-commands*)) :text x))))
       (error 'invalid-git-command)))
 
-;What the users of this library will use.
-(defun git (repodir cmd &optional (args ""))
+;Create the base stream, set input/output streams as needed.
+(defun run-base-sh ()
   (let* ((stream (sb-ext:run-program "/bin/sh" () :output :stream :input :stream :search t :wait nil))
 	 (input (sb-ext:process-input stream))
-	 (output (sb-ext:process-output stream))) 
+	 (output (sb-ext:process-output stream)))
+    (values input output)))
+
+;What the users of this library will use.
+(defun git (repodir cmd &optional (args ""))
+  (multiple-value-bind (input output) (run-base-sh)
     (cd-into-repo input output repodir)
     (exec-git-cmd input output cmd args)
     (format input "exit~%")
