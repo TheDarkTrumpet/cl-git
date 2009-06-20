@@ -79,7 +79,7 @@
 	(format instream "git ~a ~a~%" (string-downcase (symbol-name cmd)) args)
 	(force-output instream)
 	(let ((x (get-from-shell outstream)))
-	  (if (eql (scan (gethash :failurereg (gethash cmd *git-commands*)) x) nil)
+	  (if (not (eql (scan (gethash :failurereg (gethash cmd *git-commands*)) x) nil))
 	      (error (gethash :errortype (gethash cmd *git-commands*)) :text x))))
       (error 'invalid-git-command)))
 
