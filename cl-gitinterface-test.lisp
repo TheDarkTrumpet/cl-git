@@ -5,8 +5,9 @@
 ; (run-tests)
 
 (eval-when (:compile-toplevel :load-toplevel
-			      :execute) (require :cl-gitinterface))
+			      :execute) (require :cl-gitinterface) (require :sb-posix) (require :lisp-unit))
 
+(use-package :lisp-unit)
 (in-package :cl-gitinterface)
 
 (defvar *cmd-cur* "")
@@ -23,6 +24,14 @@
 
 ;Stub out the run-base-sh from the original function, so it just returns 2 basic streams.
 (defun run-base-sh ()
-  (let* ((out (make-string-output-stream))
-	 (in (make-concatenated-stream out)))
-    (values in out)))
+  (multiple-value-bind (in out) (sb-posix:pipe)
+    (let ((input (sb-sys:make-fd-stream in
+					:input t
+					:external-format :ascii
+					:buffering :none :name "in"))
+	  (output (sb-sys:make-fd-stream out
+					 :output t
+					 :external-format :ascii
+					 :buffering :none :name "out")))
+      (values input output))))
+
