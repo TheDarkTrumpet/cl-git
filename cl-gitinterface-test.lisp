@@ -18,7 +18,7 @@
   (declare (ignore stream))
   (let ((retvar ""))
     (cond
-      ((eql *cmd-cur* "status")
+      ((eql *cmd-cur* "pull")
        (setf retvar "repository clean!")))
     retvar))
 
@@ -35,3 +35,9 @@
 					 :buffering :none :name "out")))
       (values input output))))
 
+
+;;;;;;;;; TESTS ;;;;;;;;;;
+
+(define-test test-git-pull-failure
+  (setf *cmd-cur* "pull")
+  (assert-error 'git-merge-conflict (git "" :pull)))
