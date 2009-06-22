@@ -34,7 +34,7 @@
 (macrolet ((def ()
              `(progn
                 ,@(loop for k being the hash-keys in *git-commands* collect 
-                    `(define-condition ,k (error)
+                    `(define-condition ,(intern (concatenate 'string "git-" (string-downcase (symbol-name k)) "-error")) (error)
                        ((text :initarg :text :reader text)))))))
   (def))
 
