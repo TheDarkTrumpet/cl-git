@@ -11,38 +11,25 @@
 ;Available git commands and their associated 
 
 ;Empty Hash Table.
-;TODO - Don't need such a complex structure of hash commands. 
 (defvar *git-commands* (make-hash-table))
 
 ;Pull Command.
-(setf (gethash :pull *git-commands*) (make-hash-table))
-(setf (gethash :failurereg (gethash :pull *git-commands*)) ".*?Automatic merge failed; fix conflicts and then commit the result.*")
-(setf (gethash :errortype (gethash :pull *git-commands*)) 'git-merge-conflict)
+(setf (gethash :pull *git-commands*) ".*?Automatic merge failed; fix conflicts and then commit the result.*")
 
 ;Push Command.
-(setf (gethash :push *git-commands*) (make-hash-table))
-(setf (gethash :failurereg (gethash :push *git-commands*)) ".*?error: failed to push some refs.*")
-(setf (gethash :errortype (gethash :push *git-commands*)) 'git-push-conflict)
+(setf (gethash :push *git-commands*) ".*?error: failed to push some refs.*")
 
 ;Commit Command
-(setf (gethash :commit *git-commands*) (make-hash-table))
-(setf (gethash :failurereg (gethash :commit *git-commands*)) ".*?fatal: cannot do a partial commit during a merge.*")
-(setf (gethash :errortype (gethash :commit *git-commands*)) 'git-commit-error)
+(setf (gethash :commit *git-commands*) ".*?fatal: cannot do a partial commit during a merge.*")
 
 ;Remote Add
-(setf (gethash :remote-add *git-commands*) (make-hash-table))
-(setf (gethash :failurereg (gethash :remote-add *git-commands*)) ".*?fatal: remote origin already exists.*")
-(setf (gethash :errortype (gethash :remote-add *git-commands*)) 'git-remote-add-error)
+(setf (gethash :remote-add *git-commands*) ".*?fatal: remote origin already exists.*")
 
 ;Clone
-(setf (gethash :clone *git-commands*) (make-hash-table))
-(setf (gethash :failurereg (gethash :clone *git-commands*)) ".*?fatal:.*")
-(setf (gethash :errortype (gethash :clone *git-commands*)) 'git-clone-error)
+(setf (gethash :clone *git-commands*) ".*?fatal:.*")
 
 ;Status
-(setf (gethash :status *git-commands*) (make-hash-table))
-(setf (gethash :failurereg (gethash :status *git-commands*)) ".*?fatal:.*")
-(setf (gethash :errortype (gethash :status *git-commands*)) 'git-status-error)
+(setf (gethash :status *git-commands*) ".*?fatal:.*")
 
 ;Loop through all the hash elements and create conditions.
 ;TODO MAKE MACRO OUT OF THIS!
