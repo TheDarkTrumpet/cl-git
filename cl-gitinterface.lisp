@@ -31,6 +31,13 @@
 ;Status
 (setf (gethash :status *git-commands*) ".*?fatal:.*")
 
+(defmacro define-git-condition (cmd)
+  `(define-condition ,(intern (concatenate 'string "git-" (symbol-name cmd) "-error")) (error)
+     ((text :initarg :text :reader text))))
+
+(loop for k being the hash-keys in *git-commands* do
+     (define-git-condition k))
+
 ;Loop through all the hash elements and create conditions.
 ;TODO MAKE MACRO OUT OF THIS!
 ;(loop for k being the hash-values in *git-commands* do 
@@ -74,7 +81,7 @@
 	(format instream "git ~a ~a~%" (string-downcase (symbol-name cmd)) args)
 	(force-output instream)
 	(let ((x (get-from-shell outstream)))
-	  (if (not (eql (scan (gethash :failurereg (gethash cmd *git-commands*)) x) nil))
+	  (if (not (eql (scan (gethash cmd *git-commands*) x) nil))
 	      (error (gethash :errortype (gethash cmd *git-commands*)) :text x))))
       (error 'invalid-git-command)))
 
