@@ -11,6 +11,7 @@
 ;Available git commands and their associated 
 
 ;Empty Hash Table.
+;TODO - Don't need such a complex structure of hash commands. 
 (defvar *git-commands* (make-hash-table))
 
 ;Pull Command.
@@ -42,6 +43,13 @@
 (setf (gethash :status *git-commands*) (make-hash-table))
 (setf (gethash :failurereg (gethash :status *git-commands*)) ".*?fatal:.*")
 (setf (gethash :errortype (gethash :status *git-commands*)) 'git-status-error)
+
+;Loop through all the hash elements and create conditions.
+;TODO MAKE MACRO OUT OF THIS!
+;(loop for k being the hash-values in *git-commands* do 
+;     (let ((v (gethash :errortype k)))       
+;       (quote (define-condition v (error)
+;	 ((text :initarg :text :reader text))))))
 
 ;Listen on a stream to for when input comes along.
 (defun probe-stream (stream)
