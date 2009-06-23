@@ -33,10 +33,17 @@
 
 (macrolet ((def ()
              `(progn
-                ,@(loop for k being the hash-keys in *git-commands* collect 
-                    `(define-condition ,(intern (concatenate 'string "git-" (string-downcase (symbol-name k)) "-error")) (error)
+                ,@(loop for k in '(:pull :push :commit :remote-add :clone :status) collect 
+		       `(define-condition ,(intern (concatenate 'string "git-" (string-downcase (symbol-name k)) "-error")) (error)
                        ((text :initarg :text :reader text)))))))
   (def))
+
+;(macrolet ((def ()
+;             `(progn
+;                ,@(loop for k being the hash-keys in *git-commands* collect 
+;                    `(define-condition ,(intern (concatenate 'string "git-" (string-downcase (symbol-name k)) "-error")) (error)
+;                       ((text :initarg :text :reader text)))))))
+;  (def))
 
 ;Loop through all the hash elements and create conditions.
 ;TODO MAKE MACRO OUT OF THIS!

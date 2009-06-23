@@ -7,9 +7,8 @@
 (eval-when (:compile-toplevel :load-toplevel
 			      :execute) (require :cl-gitinterface) (require :sb-posix) (require :lisp-unit))
 
-(use-package :lisp-unit)
-(use-package :cl-gitinterface)
-(in-package :lisp-unit)
+;(use-package :lisp-unit)
+(in-package :cl-gitinterface)
 
 (defvar *cmd-cur* "")
 (defvar *cmd-mode* "error")
@@ -17,6 +16,7 @@
 ;Stub out the get-from-shell function, since we want to test through the use of errors.
 (defun get-from-shell (stream)
   (declare (ignore stream))
+  (format t "in new git-from-shell: ~a~%" *cmd-cur*)
   (let ((retvar ""))
     (cond
       ((eql *cmd-cur* "pull")
@@ -34,11 +34,12 @@
 					 :output t
 					 :external-format :ascii
 					 :buffering :none :name "out")))
-      (values input output))))
+      (values output input))))
 
 
 ;;;;;;;;; TESTS ;;;;;;;;;;
 
 (define-test test-git-pull-failure
-  (setf *cmd-cur* "pull")
-  (assert-error 'git-merge-conflict (git "" :pull)))
+  (progn
+    (setf *cmd-cur* "pull")
+    (assert-error 'git-pull-error (git "" :pull))))
