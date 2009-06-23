@@ -8,7 +8,8 @@
 			      :execute) (require :cl-gitinterface) (require :sb-posix) (require :lisp-unit))
 
 (use-package :lisp-unit)
-(in-package :cl-gitinterface)
+(use-package :cl-gitinterface)
+(in-package :lisp-unit)
 
 (defvar *cmd-cur* "")
 (defvar *cmd-mode* "error")
