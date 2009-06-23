@@ -84,7 +84,7 @@
 ;Verify the output from the cmd and toss an error if it is incorrect.
 (defun verify-git-cmd (stroutput cmd)
   (if (not (eql (scan (gethash cmd *git-commands*) stroutput) nil))
-      (error (gethash cmd *git-commands*) :text stroutput)
+      (error (intern (string-upcase (concatenate 'string "git-" (string-downcase (symbol-name cmd )) "-error")) "KEYWORD") :text stroutput)
       T))
 
 ;Wrapper for the actual git command.
