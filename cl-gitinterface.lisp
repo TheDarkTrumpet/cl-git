@@ -14,7 +14,7 @@
 (defvar *git-commands* (make-hash-table))
 
 ;Pull Command.
-(setf (gethash :pull *git-commands*) ".*?Automatic merge failed; fix conflicts and then commit the result.*")
+(setf (gethash :pull *git-commands*) ".*?Automatic merge failed.*")
 
 ;Push Command.
 (setf (gethash :push *git-commands*) ".*?error: failed to push some refs.*")
@@ -81,15 +81,19 @@
   ;(format t "Output: ~a~%" (get-from-shell outstream))
   (format t "output given..~%"))
 
+;Verify the output from the cmd and toss an error if it is incorrect.
+(defun verify-git-cmd (stroutput cmd)
+  (if (not (eql (scan (gethash cmd *git-commands*) stroutput) nil))
+      (error (gethash cmd *git-commands*) :text stroutput)
+      T))
+
 ;Wrapper for the actual git command.
 (defun exec-git-cmd (instream outstream cmd args)
   (if (not (eql (gethash cmd *git-commands*) nil))
       (progn
 	(format instream "git ~a ~a~%" (string-downcase (symbol-name cmd)) args)
 	(force-output instream)
-	(let ((x (get-from-shell outstream)))
-	  (if (not (eql (scan (gethash cmd *git-commands*) x) nil))
-	      (error (gethash :errortype (gethash cmd *git-commands*)) :text x))))
+	(verify-git-cmd (get-from-shell outstream) cmd))
       (error 'invalid-git-command)))
 
 ;Create the base stream, set input/output streams as needed.

@@ -7,14 +7,17 @@
 (eval-when (:compile-toplevel :load-toplevel
 			      :execute) (require :cl-gitinterface) (require :sb-posix) (require :lisp-unit))
 
+(defpackage :cl-gitinterface-test
+  (:use :cl :cl-gitinterface :lisp-unit))
+
 ;(use-package :lisp-unit)
-(in-package :cl-gitinterface)
+(in-package :cl-gitinterface-test)
 
 (defvar *cmd-cur* "")
 (defvar *cmd-mode* "error")
 
 ;Stub out the get-from-shell function, since we want to test through the use of errors.
-(defun get-from-shell (stream)
+(defun cl-gitinterface::get-from-shell (stream)
   (declare (ignore stream))
   (format t "in new git-from-shell: ~a~%" *cmd-cur*)
   (let ((retvar ""))
@@ -24,7 +27,7 @@
     retvar))
 
 ;Stub out the run-base-sh from the original function, so it just returns 2 basic streams.
-(defun run-base-sh ()
+(defun cl-gitinterface::run-base-sh ()
   (multiple-value-bind (in out) (sb-posix:pipe)
     (let ((input (sb-sys:make-fd-stream in
 					:input t
@@ -40,6 +43,4 @@
 ;;;;;;;;; TESTS ;;;;;;;;;;
 
 (define-test test-git-pull-failure
-  (progn
-    (setf *cmd-cur* "pull")
-    (assert-error 'git-pull-error (git "" :pull))))
+  (assert-error 'git-pull-error (cl-gitinterface::verify-git-cmd "Automatic merge failed; fix this now!" :pull)))
