@@ -43,4 +43,4 @@
 ;;;;;;;;; TESTS ;;;;;;;;;;
 
 (define-test test-git-pull-failure
-  (assert-error 'git-pull-error (cl-gitinterface::verify-git-cmd "Automatic merge failed; fix this now!" :pull)))
+  (assert-error 'CL-GITINTERFACE::git-pull-error (cl-gitinterface::verify-git-cmd "Automatic merge failed; fix this now!" :pull)))

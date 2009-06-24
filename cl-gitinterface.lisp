@@ -34,8 +34,8 @@
 (macrolet ((def ()
              `(progn
                 ,@(loop for k in '(:pull :push :commit :remote-add :clone :status) collect 
-		       `(define-condition ,(intern (concatenate 'string "git-" (string-downcase (symbol-name k)) "-error")) (error)
-                       ((text :initarg :text :reader text)))))))
+		       `(define-condition ,(intern (concatenate 'string "GIT-" (symbol-name k) "-ERROR")) (error)((text :initarg :text :reader text))
+                       )))))
   (def))
 
 ;(macrolet ((def ()
@@ -84,7 +84,8 @@
 ;Verify the output from the cmd and toss an error if it is incorrect.
 (defun verify-git-cmd (stroutput cmd)
   (if (not (eql (scan (gethash cmd *git-commands*) stroutput) nil))
-      (error (intern (string-upcase (concatenate 'string "git-" (string-downcase (symbol-name cmd )) "-error")) "KEYWORD") :text stroutput)
+      ;(error 'git-pull-error :text stroutput)
+      (error (intern (string-upcase (concatenate 'string "git-" (string-downcase (symbol-name cmd )) "-error")) :CL-GITINTERFACE) :text stroutput)
       T))
 
 ;Wrapper for the actual git command.
