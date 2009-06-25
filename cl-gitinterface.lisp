@@ -38,27 +38,13 @@
                        )))))
   (def))
 
-;(macrolet ((def ()
-;             `(progn
-;                ,@(loop for k being the hash-keys in *git-commands* collect 
-;                    `(define-condition ,(intern (concatenate 'string "git-" (string-downcase (symbol-name k)) "-error")) (error)
-;                       ((text :initarg :text :reader text)))))))
-;  (def))
-
-;Loop through all the hash elements and create conditions.
-;TODO MAKE MACRO OUT OF THIS!
-;(loop for k being the hash-values in *git-commands* do 
-;     (let ((v (gethash :errortype k)))       
-;       (quote (define-condition v (error)
-;	 ((text :initarg :text :reader text))))))
-
 ;Listen on a stream to for when input comes along.
-(defun probe-stream (stream)
+(defun probe-stream (stream &optional (timeout 60))
   (let ((break-limit (timestamp-to-unix (now))))
     (loop 
        (when (listen stream)
 	 (return))
-       (when (> (- (timestamp-to-unix (now)) break-limit) 60)
+       (when (> (- (timestamp-to-unix (now)) break-limit) timeout)
 	 (error 'break-limit-reached "Time limit reached"))
        )
     ))
@@ -88,9 +74,13 @@
 (defun exec-git-cmd (instream outstream err cmd args)
   (if (not (eql (gethash cmd *git-commands*) nil))
       (progn
+	(format t "in beginning..~%")
 	(format instream "git ~a ~a~%" (string-downcase (symbol-name cmd)) args)
+	(format t "doing output..~%")
 	(force-output instream)
+	(format t "kljlj ~%")
 	(verify-git-cmd (get-from-shell outstream) cmd)
+	(format t "after verify ~%")
 	(format t "Error stream: ~a~%" (get-from-shell err)))
       (error 'invalid-git-command)))
 
