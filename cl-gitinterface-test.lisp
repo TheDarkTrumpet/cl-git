@@ -50,6 +50,3 @@
 			  (assert-error (intern ,(string-upcase (concatenate 'string "git-" (string-downcase (symbol-name k)) "-error")) :CL-GITINTERFACE)
 			  (cl-gitinterface::verify-git-cmd "Automatic merge failed....error: failed to push some refs fatal: cannot do a partial commit during a merge fatal: remote origin already exists fatal: kljlkj" ,k)))))))
   (def-test-fail))
-
-;(define-test test-git-pull-failure
-;  (assert-error 'CL-GITINTERFACE::git-pull-error (cl-gitinterface::verify-git-cmd "Automatic merge failed; fix this now!" :pull)))

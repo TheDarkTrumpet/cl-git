@@ -73,13 +73,9 @@
 ; cd into repository
 ; Error is : "can't cd to ...." <-- do a regexp on this.
 ; Success is nothing...that doesn't help.
-(defun cd-into-repo (instream outstream repodir) 
+(defun cd-into-repo (instream repodir) 
   (format instream "cd ~a~%" repodir)
-  (format t "executed cd..~%")
-  (force-output instream)
-  (format t "forced output .. ~%")
-  ;(format t "Output: ~a~%" (get-from-shell outstream))
-  (format t "output given..~%"))
+  (force-output instream))
 
 ;Verify the output from the cmd and toss an error if it is incorrect.
 (defun verify-git-cmd (stroutput cmd)
@@ -89,25 +85,27 @@
       T))
 
 ;Wrapper for the actual git command.
-(defun exec-git-cmd (instream outstream cmd args)
+(defun exec-git-cmd (instream outstream err cmd args)
   (if (not (eql (gethash cmd *git-commands*) nil))
       (progn
 	(format instream "git ~a ~a~%" (string-downcase (symbol-name cmd)) args)
 	(force-output instream)
-	(verify-git-cmd (get-from-shell outstream) cmd))
+	(verify-git-cmd (get-from-shell outstream) cmd)
+	(format t "Error stream: ~a~%" (get-from-shell err)))
       (error 'invalid-git-command)))
 
 ;Create the base stream, set input/output streams as needed.
 (defun run-base-sh ()
   (let* ((stream (sb-ext:run-program "/bin/sh" () :output :stream :input :stream :search t :wait nil))
 	 (input (sb-ext:process-input stream))
-	 (output (sb-ext:process-output stream)))
-    (values input output)))
+	 (output (sb-ext:process-output stream))
+	 (err (sb-ext:process-error stream)))
+    (values input output err)))
 
 ;What the users of this library will use.
 (defun git (repodir cmd &optional (args ""))
-  (multiple-value-bind (input output) (run-base-sh)
-    (cd-into-repo input output repodir)
-    (exec-git-cmd input output cmd args)
+  (multiple-value-bind (input output err) (run-base-sh)
+    (cd-into-repo input repodir)
+    (exec-git-cmd input output err cmd args)
     (format input "exit~%")
     (force-output input)))
