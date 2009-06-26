@@ -11,29 +11,11 @@
 ;Available git commands and their associated 
 
 ;Empty Hash Table.
-(defvar *git-commands* (make-hash-table))
-
-;Pull Command.
-(setf (gethash :pull *git-commands*) ".*?Automatic merge failed.*")
-
-;Push Command.
-(setf (gethash :push *git-commands*) ".*?error: failed to push some refs.*")
-
-;Commit Command
-(setf (gethash :commit *git-commands*) ".*?fatal: cannot do a partial commit during a merge.*")
-
-;Remote Add
-(setf (gethash :remote-add *git-commands*) ".*?fatal: remote origin already exists.*")
-
-;Clone
-(setf (gethash :clone *git-commands*) ".*?fatal:.*")
-
-;Status
-(setf (gethash :status *git-commands*) ".*?fatal:.*")
+(defvar *git-commands* '(:pull :push :commit :remote-add :clone :status))
 
 (macrolet ((def ()
              `(progn
-                ,@(loop for k in '(:pull :push :commit :remote-add :clone :status) collect 
+                ,@(loop for k in *git-commands* collect 
 		       `(define-condition ,(intern (concatenate 'string "GIT-" (symbol-name k) "-ERROR")) (error)((text :initarg :text :reader text))
                        )))))
   (def))
