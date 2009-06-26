@@ -48,10 +48,15 @@
   (force-output instream))
 
 ;Verify the output from the cmd and toss an error if it is incorrect.
-(defun verify-git-cmd (stroutput cmd)
-  (if (not (eql (scan (gethash cmd *git-commands*) stroutput) nil))
+;(defun verify-git-cmd (stroutput cmd)
+;  (if (not (eql (scan (gethash cmd *git-commands*) stroutput) nil))
       ;(error 'git-pull-error :text stroutput)
-      (error (intern (string-upcase (concatenate 'string "git-" (string-downcase (symbol-name cmd )) "-error")) :CL-GITINTERFACE) :text stroutput)
+;      (error (intern (string-upcase (concatenate 'string "git-" (string-downcase (symbol-name cmd )) "-error")) :CL-GITINTERFACE) :text stroutput)
+;      T))
+
+(defun verify-git-error (stroutput cmd)
+  (if (not (eql stroutput Nil))
+      (error (intern (format nil "GIT-~A-ERROR" (symbol-name cmd))) :text stroutput)
       T))
 
 ;Wrapper for the actual git command.
@@ -63,8 +68,9 @@
 	(format t "doing output..~%")
 	(force-output instream)
 	(format t "kljlj ~%")
-	(verify-git-cmd (get-from-shell outstream) cmd)
+	(get-from-shell outstream)
 	(format t "after verify ~%")
+	(verify-git-error err cmd)
 	(format t "Error stream: ~a~%" (get-from-shell err Nil)))
       (error 'invalid-git-command)))
 
