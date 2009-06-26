@@ -50,8 +50,9 @@
     ))
 
 ;Grab the contents from a shell 
-(defun get-from-shell (stream)
-  (probe-stream stream)
+(defun get-from-shell (stream &optional (probe T))
+  (if (eql probe T)
+      (probe-stream stream))
   (with-output-to-string (out)
     (loop for x = (read-char-no-hang stream nil nil) while x do
 	 (format out "~a" x))))
@@ -81,7 +82,7 @@
 	(format t "kljlj ~%")
 	(verify-git-cmd (get-from-shell outstream) cmd)
 	(format t "after verify ~%")
-	(format t "Error stream: ~a~%" (get-from-shell err)))
+	(format t "Error stream: ~a~%" (get-from-shell err Nil)))
       (error 'invalid-git-command)))
 
 ;Create the base stream, set input/output streams as needed.
