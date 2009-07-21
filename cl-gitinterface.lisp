@@ -10,15 +10,11 @@
 
 ;Available git commands and their associated 
 
-;Empty Hash Table.
-(defvar *git-commands* '(:pull :push :commit :remote-add :clone :status))
-
 (macrolet ((def ()
              `(progn
+		(defvar *git-commands* (list))
                 ,@(loop for k in '(:pull :push :commit :remote-add :clone :status) collect
 		       `(progn
-			  (if (eql nil *git-commands*)
-			      (defvar *git-commands* (list)))
 			  (push ,k *git-commands*)
 			  (define-condition ,(intern (format nil "GIT-~A-ERROR" (symbol-name k)))
 						   (error)((text :initarg :text :reader text))))
