@@ -16,9 +16,13 @@
 (macrolet ((def ()
              `(progn
                 ,@(loop for k in '(:pull :push :commit :remote-add :clone :status) collect
-		       `(define-condition ,(intern (format nil "GIT-~A-ERROR" (symbol-name k)))
-						   (error)((text :initarg :text :reader text))
-                       )))))
+		       `(progn
+			  (if (eql nil *git-commands*)
+			      (defvar *git-commands* (list)))
+			  (push ,k *git-commands*)
+			  (define-condition ,(intern (format nil "GIT-~A-ERROR" (symbol-name k)))
+						   (error)((text :initarg :text :reader text))))
+                       ))))
   (def))
 
 ;Listen on a stream to for when input comes along.
