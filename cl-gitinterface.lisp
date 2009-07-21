@@ -15,7 +15,7 @@
 
 (macrolet ((def ()
              `(progn
-                ,@(loop for k in *git-commands* collect 
+                ,@(loop for k in '(:pull :push :commit :remote-add :clone :status) collect
 		       `(define-condition ,(intern (format nil "GIT-~A-ERROR" (symbol-name k)))
 						   (error)((text :initarg :text :reader text))
                        )))))
