@@ -9,16 +9,22 @@
 
 
 ;Available git commands and their associated 
+(define-condition git-error (error) 
+  ((text :initarg :text
+	 :reader text)))
+
+(defmacro define-git-command (cmd)
+  `(progn
+     (push ,cmd *git-commands*)
+     (define-condition ,(intern (format nil "GIT-~A-ERROR" (symbol-name cmd)))
+	 (git-error)())
+  ))
 
 (macrolet ((def ()
              `(progn
 		(defvar *git-commands* (list))
                 ,@(loop for k in '(:pull :push :commit :remote-add :clone :status) collect
-		       `(progn
-			  (push ,k *git-commands*)
-			  (define-condition ,(intern (format nil "GIT-~A-ERROR" (symbol-name k)))
-						   (error)((text :initarg :text :reader text))))
-                       ))))
+		       `(define-git-command ,k)))))
   (def))
 
 ;Listen on a stream to for when input comes along.
