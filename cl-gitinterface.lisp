@@ -9,10 +9,14 @@
 
 
 ;Available git commands and their associated 
+
+;The parent git error class, that the others will inherit from.
 (define-condition git-error (error) 
   ((text :initarg :text
 	 :reader text)))
 
+; Used when defining a new git command, which will define the condition
+; and add it to the list of available commands.
 (defmacro define-git-command (cmd)
   `(progn
      (push ,cmd *git-commands*)
@@ -20,6 +24,7 @@
 	 (git-error)())
   ))
 
+; Define the base commands.
 (macrolet ((def ()
              `(progn
 		(defvar *git-commands* (list))
