@@ -53,7 +53,7 @@
 				    :remote-add
 				    :clone
 				    :status) collect
-		       `(define-test ,(format nil "test-git-~A-condition-~A" (symbol-name k) "-failure")
+		       `(define-test ,(format nil "test-git-~A-condition-~A" (symbol-name k) "failure")
 			  (assert-error (intern ,(format nil "GIT-~A-ERROR" (symbol-name k)) :cl-gitinterface)
 					(error (intern ,(format nil "GIT-~A-ERROR" (symbol-name k)) :cl-gitinterface))))))
 	     ))
