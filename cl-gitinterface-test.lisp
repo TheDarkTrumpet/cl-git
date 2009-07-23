@@ -42,11 +42,19 @@
 
 ;;;;;;;;; TESTS ;;;;;;;;;;
 
+
 ;Define the failure messages
-(macrolet ((def-test-fail ()
+(macrolet ((def-build-base-exception-checks ()
 	     `(progn
-		,@(loop for k in '(:pull :push :commit :remote-add :clone :status) collect
-		       `(define-test ,(concatenate 'string "test-git-" (symbol-name k) "-failure")
-			  (assert-error (intern ,(string-upcase (concatenate 'string "git-" (string-downcase (symbol-name k)) "-error")) :CL-GITINTERFACE)
-			  (cl-gitinterface::verify-git-cmd "Automatic merge failed....error: failed to push some refs fatal: cannot do a partial commit during a merge fatal: remote origin already exists fatal: kljlkj" ,k)))))))
-  (def-test-fail))
+		,@(loop for k in (list 
+				    :pull
+				    :push
+				    :commit
+				    :remote-add
+				    :clone
+				    :status) collect
+		       `(define-test ,(format nil "test-git-~A-condition-~A" (symbol-name k) "-failure")
+			  (assert-error (intern ,(format nil "GIT-~A-ERROR" (symbol-name k)) :cl-gitinterface)
+					(error (intern ,(format nil "GIT-~A-ERROR" (symbol-name k)) :cl-gitinterface))))))
+	     ))
+  (def-build-base-exception-checks))

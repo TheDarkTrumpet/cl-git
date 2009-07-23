@@ -58,13 +58,6 @@
   (format instream "cd ~a~%" repodir)
   (force-output instream))
 
-;Verify the output from the cmd and toss an error if it is incorrect.
-;(defun verify-git-cmd (stroutput cmd)
-;  (if (not (eql (scan (gethash cmd *git-commands*) stroutput) nil))
-      ;(error 'git-pull-error :text stroutput)
-;      (error (intern (string-upcase (concatenate 'string "git-" (string-downcase (symbol-name cmd )) "-error")) :CL-GITINTERFACE) :text stroutput)
-;      T))
-
 (defun verify-git-error (stroutput cmd)
   (if (not (eql stroutput Nil))
       (error (intern (format nil "GIT-~A-ERROR" (symbol-name cmd))) :text stroutput)
