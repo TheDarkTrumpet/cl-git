@@ -65,3 +65,10 @@
     (assert-true (cl-gitinterface::define-git-command testcmd))
     (assert-eql testcmd (first cl-gitinterface::*git-commands*))
     (assert-error (intern (format nil "GIT-~A-ERROR" (symbol-name testcmd)) :cl-gitinterface) (error (intern (format nil "GIT-~A-ERROR" (symbol-name testcmd)) :cl-gitinterface)))))
+
+(define-test "test-probe-stream" 
+  (let ((x (make-string-input-stream "test-probe-stream succeed"))
+	(y (make-string-input-stream "")))
+    (assert-eql t (cl-gitinterface::probe-stream x))
+    (assert-error (intern "BREAK-LIMIT-REACHED" :cl-gitinterface)
+		  (cl-gitinterface::probe-stream y 1))))

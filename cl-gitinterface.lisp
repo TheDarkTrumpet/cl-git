@@ -15,6 +15,10 @@
   ((text :initarg :text
 	 :reader text)))
 
+(define-condition break-limit-reached (error)
+  ((text :initarg :text
+	 :reader text)))
+
 ; Used when defining a new git command, which will define the condition
 ; and add it to the list of available commands.
 (defmacro define-git-command (cmd)
@@ -37,7 +41,7 @@
   (let ((break-limit (timestamp-to-unix (now))))
     (loop 
        (when (listen stream)
-	 (return))
+	 (return t))
        (when (> (- (timestamp-to-unix (now)) break-limit) timeout)
 	 (error 'break-limit-reached "Time limit reached"))
        )
