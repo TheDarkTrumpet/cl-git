@@ -1,17 +1,26 @@
-; To run:
-; (require :cl-gitinterface)
-; (in-package :cl-gitinterface)
-; (load "/this/path/cl-gitinterface-test.lisp")
-; (run-tests)
+"""
+cl-gitinterface-text-external
+
+This file runs the unit tests that are for the external exported functions for
+cl-gitinterface.  This tests what the end user would have access to, in another
+package.  This supplements the cl-gitinterface-test.lisp file, which tests
+the internal functionality as if it was all shadow imported.
+
+To run:
+(load 'cl-gitinterface-test-external')
+(in-package :cl-gitinterface-test-external)
+(run-tests)
+
+"""
 
 (eval-when (:compile-toplevel :load-toplevel
 			      :execute) (require :cl-gitinterface) (require :sb-posix) (require :lisp-unit))
 
-(defpackage :cl-gitinterface-test
+(defpackage :cl-gitinterface-test-external
   (:use :cl :cl-gitinterface :lisp-unit))
 
 ;(use-package :lisp-unit)
-(in-package :cl-gitinterface-test)
+(in-package :cl-gitinterface-test-external)
 
 (defvar *cmd-cur* "")
 (defvar *cmd-mode* "error")

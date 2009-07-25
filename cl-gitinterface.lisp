@@ -25,7 +25,7 @@
   `(progn
      (push ,cmd *git-commands*)
      (define-condition ,(intern (format nil "GIT-~A-ERROR" (symbol-name cmd)) :cl-gitinterface)
-	 (git-error)())
+	 (cl-gitinterface::git-error)())
   ))
 
 ; Define the base commands.
