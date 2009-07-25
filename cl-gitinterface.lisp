@@ -20,7 +20,7 @@
 (defmacro define-git-command (cmd)
   `(progn
      (push ,cmd *git-commands*)
-     (define-condition ,(intern (format nil "GIT-~A-ERROR" (symbol-name cmd)))
+     (define-condition ,(intern (format nil "GIT-~A-ERROR" (symbol-name cmd)) :cl-gitinterface)
 	 (git-error)())
   ))
 

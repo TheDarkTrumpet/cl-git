@@ -64,5 +64,4 @@
   (let ((testcmd :test))
     (assert-true (cl-gitinterface::define-git-command testcmd))
     (assert-eql testcmd (first cl-gitinterface::*git-commands*))
-    ;Finish fixing the entry below.
     (assert-error (intern (format nil "GIT-~A-ERROR" (symbol-name testcmd)) :cl-gitinterface) (error (intern (format nil "GIT-~A-ERROR" (symbol-name testcmd)) :cl-gitinterface)))))
