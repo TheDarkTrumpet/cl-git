@@ -58,3 +58,11 @@
 					(error (intern ,(format nil "GIT-~A-ERROR" (symbol-name k)) :cl-gitinterface))))))
 	     ))
   (def-build-base-exception-checks))
+
+;Tests to define a command, and ensure that the record is in the correct area.
+(define-test "define-git-test-command" 
+  (let ((testcmd :test))
+    (assert-true (cl-gitinterface::define-git-command testcmd))
+    (assert-eql testcmd (first cl-gitinterface::*git-commands*))
+    ;Finish fixing the entry below.
+    (assert-error (intern (format nil "GIT-~A-ERROR" (symbol-name testcmd)) :cl-gitinterface) (error (intern (format nil "GIT-~A-ERROR" (symbol-name testcmd)) :cl-gitinterface)))))
