@@ -24,10 +24,9 @@ OTHER DEALINGS IN THE SOFTWARE.
 ;;; Packages
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; Packages
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 (common-lisp:defpackage #:cl-git
   (:use #:common-lisp #:cl-ppcre #:local-time)
-  (:export #:define-test #:run-all-tests #:run-tests
+  (:export #:define-git-command #:git))
+
+
+(pushnew :cl-git common-lisp:*features*)

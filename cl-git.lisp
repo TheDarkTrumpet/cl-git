@@ -13,7 +13,9 @@
 ;The parent git error class, that the others will inherit from.
 (define-condition git-error (error) 
   ((text :initarg :text
-	 :reader text)))
+	 :reader text)
+   (cmd :initarg :cmd
+	:reader cmd)))
 
 (define-condition break-limit-reached (error)
   ((text :initarg :text
@@ -24,8 +26,6 @@
 (defmacro define-git-command (cmd)
   `(progn
      (push ,cmd *git-commands*)
-     (define-condition ,(intern (format nil "GIT-~A-ERROR" (symbol-name cmd)) :cl-gitinterface)
-	 (cl-gitinterface::git-error)())
   ))
 
 ; Define the base commands.
@@ -64,7 +64,7 @@
 
 (defun verify-git-error (stroutput cmd)
   (if (not (eql stroutput Nil))
-      (error (intern (format nil "GIT-~A-ERROR" (symbol-name cmd))) :text stroutput)
+      (error 'git-error :cmd cmd :text (concatenate "Does not exist: " stroutput))
       T))
 
 ;Wrapper for the actual git command.

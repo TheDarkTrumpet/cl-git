@@ -15,6 +15,7 @@ Easy Install:
   :version "Draft"
   :author "David Thole <dthole@gmail.com>"
   :license "MIT"
+  :depends-on (:cl-ppcre :local-time)
   :components ((:file "defpackage")
                (:file "cl-git"
-                      :depends-on (:defpackage))))
+                      :depends-on ("defpackage"))))
