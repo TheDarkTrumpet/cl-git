@@ -2,9 +2,6 @@
 ; (require :cl-git)
 ; (in-package :cl-git)
 
-(defpackage :cl-git
-  (:use :cl :cl-ppcre :local-time))
-
 (in-package :cl-git)
 
 
