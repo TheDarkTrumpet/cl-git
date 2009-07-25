@@ -7,11 +7,7 @@
 ;(eval-when (:compile-toplevel :load-toplevel
 ;			      :execute) (require :cl-gitinterface) (require :sb-posix) (require :lisp-unit))
 
-(defpackage :cl-gitinterface-test
-  (:use :cl :cl-gitinterface :lisp-unit))
-
-;(use-package :lisp-unit)
-(in-package :cl-gitinterface-test)
+(in-package :cl-git-test)
 
 (defvar *cmd-cur* "")
 (defvar *cmd-mode* "error")
@@ -54,21 +50,21 @@
 				    :clone
 				    :status) collect
 		       `(define-test ,(format nil "test-git-~A-condition-~A" (symbol-name k) "failure")
-			  (assert-error (intern ,(format nil "GIT-~A-ERROR" (symbol-name k)) :cl-gitinterface)
-					(error (intern ,(format nil "GIT-~A-ERROR" (symbol-name k)) :cl-gitinterface))))))
+			  (assert-error (intern ,(format nil "GIT-~A-ERROR" (symbol-name k)) :cl-git)
+					(error (intern ,(format nil "GIT-~A-ERROR" (symbol-name k)) :cl-git))))))
 	     ))
   (def-build-base-exception-checks))
 
 ;Tests to define a command, and ensure that the record is in the correct area.
 (define-test "define-git-test-command" 
   (let ((testcmd :test))
-    (assert-true (cl-gitinterface::define-git-command testcmd))
-    (assert-eql testcmd (first cl-gitinterface::*git-commands*))
-    (assert-error (intern (format nil "GIT-~A-ERROR" (symbol-name testcmd)) :cl-gitinterface) (error (intern (format nil "GIT-~A-ERROR" (symbol-name testcmd)) :cl-gitinterface)))))
+    (assert-true (cl-git::define-git-command testcmd))
+    (assert-eql testcmd (first cl-git::*git-commands*))
+    (assert-error (intern (format nil "GIT-~A-ERROR" (symbol-name testcmd)) :cl-git) (error (intern (format nil "GIT-~A-ERROR" (symbol-name testcmd)) :cl-git)))))
 
 (define-test "test-probe-stream" 
   (let ((x (make-string-input-stream "test-probe-stream succeed"))
 	(y (make-string-input-stream "")))
-    (assert-eql t (cl-gitinterface::probe-stream x))
-    (assert-error (intern "BREAK-LIMIT-REACHED" :cl-gitinterface)
-		  (cl-gitinterface::probe-stream y 1))))
+    (assert-eql t (cl-git::probe-stream x))
+    (assert-error (intern "BREAK-LIMIT-REACHED" :cl-git)
+		  (cl-git::probe-stream y 1))))
