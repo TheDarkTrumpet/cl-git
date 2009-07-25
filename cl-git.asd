@@ -17,4 +17,4 @@ Easy Install:
   :license "MIT"
   :components ((:file "defpackage")
                (:file "cl-git"
-                      :depends-on (:cl-ppcre :local-time))))
+                      :depends-on (:defpackage))))

@@ -1,11 +1,11 @@
 ; To run:
-; (require :cl-gitinterface)
-; (in-package :cl-gitinterface)
+; (require :cl-git)
+; (in-package :cl-git)
 
-(defpackage :cl-gitinterface
+(defpackage :cl-git
   (:use :cl :cl-ppcre :local-time))
 
-(in-package :cl-gitinterface)
+(in-package :cl-git)
 
 
 ;Available git commands and their associated 
