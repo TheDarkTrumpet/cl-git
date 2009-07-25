@@ -4,8 +4,8 @@
 ; (load "/this/path/cl-gitinterface-test.lisp")
 ; (run-tests)
 
-(eval-when (:compile-toplevel :load-toplevel
-			      :execute) (require :cl-gitinterface) (require :sb-posix) (require :lisp-unit))
+;(eval-when (:compile-toplevel :load-toplevel
+;			      :execute) (require :cl-gitinterface) (require :sb-posix) (require :lisp-unit))
 
 (defpackage :cl-gitinterface-test
   (:use :cl :cl-gitinterface :lisp-unit))
