@@ -26,7 +26,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 (common-lisp:defpackage #:cl-git
   (:use #:common-lisp #:cl-ppcre #:local-time)
-  (:export #:define-git-command #:git))
+  (:export #:git))
 
 
 (pushnew :cl-git common-lisp:*features*)
