@@ -44,20 +44,26 @@
   (format instream "cd ~a~%" repodir)
   (force-output instream))
 
-(defun verify-git-error (stroutput cmd)
-  (if (not (eql stroutput Nil))
-      (error 'git-error :cmd cmd :text 
-             (with-output-to-string (s)
-               (format s "Does not exist: ~a" stroutput)))
-      T))
+(defun verify-git-error (return-code stroutput cmd)
+  (when (not (= return-code 0)) 
+    (error 'git-error 
+           :cmd cmd 
+           :text (with-output-to-string (s)
+                   (format s "Does not exist: ~a" stroutput)))))
+
+; return the last return code (echo $?)
+(defun get-last-return-code (instream outstream)
+  (format instream "echo $?~%")
+  (force-output instream)
+  (parse-integer (get-from-shell outstream) :junk-allowed t))
 
 ;Wrapper for the actual git command.
 (defun exec-git-cmd (instream outstream err cmd args)
   (format instream "git ~a ~a~%" cmd args)
   (force-output instream)
-  ;(verify-git-error err cmd)
-  (get-from-shell outstream)
-  )
+  (prog1
+    (get-from-shell outstream)
+    (verify-git-error (get-last-return-code instream outstream) err cmd)))
 
 ;Create the base stream, set input/output streams as needed.
 (defun run-base-sh ()
