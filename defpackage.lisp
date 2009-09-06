@@ -25,7 +25,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (common-lisp:defpackage #:cl-git
-  (:use #:common-lisp #:cl-ppcre #:local-time)
+  (:use #:common-lisp #:cl-ppcre #:local-time #:external-program)
   (:export #:git))
 
 

@@ -67,15 +67,13 @@
 
 ;Create the base stream, set input/output streams as needed.
 (defun run-base-sh ()
-  (let* ((stream (sb-ext:run-program "/bin/sh" () 
-                                     :output :stream 
-                                     :input :stream 
-                                     :error :stream 
-                                     :search t 
-                                     :wait nil))
-	 (input (sb-ext:process-input stream))
-	 (output (sb-ext:process-output stream))
-	 (err (sb-ext:process-error stream)))
+  (let* ((stream (start "/bin/sh" () 
+                        :output :stream 
+                        :input :stream 
+                        :error :stream ))
+         (input (process-input-stream stream))
+         (output (process-output-stream stream))
+         (err (process-error-stream stream)))
     (values input output err)))
 
 ;What the users of this library will use.

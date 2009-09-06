@@ -17,7 +17,7 @@ Easy Install:
   :author "David Thole <dthole@gmail.com>"
   :license "MIT"
   :serial t
-  :depends-on (:cl-ppcre :local-time)
+  :depends-on (:cl-ppcre :local-time :external-program)
   :components ((:file "defpackage")
                (:file "cl-git"
                       :depends-on ("defpackage"))))
