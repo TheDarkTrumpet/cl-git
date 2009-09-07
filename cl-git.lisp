@@ -41,15 +41,40 @@
     (loop for x = (read-char-no-hang stream nil nil) while x do
 	 (format out "~a" x))))
 
+; Those two "portable" functions haven't been tested with all the
+; implementations it supports, it is just based on the implementations
+; documentations and so should be compatible
+(defun chdir (dir)
+  "A portable version of chdir"
+  #+allegro (excl:chdir dir)
+  #+clisp (ext:cd dir)
+  #+cmucl (unix:unix-chdir dir)
+  #+lispworks (hcl:change-directory dir)
+  #+sbcl (sb-posix:chdir dir)
+  #-(or allegro clisp cmucl lispworks sbcl)
+  (error "lisp implementation not supported"))
+
+(defun getcwd (dir)
+  "A portable version of getcwd"
+  #+allegro (excl:current-directory)
+  #+clisp (ext:cd)
+  #+cmucl (multiple-value-bind (_ dir) (unix:unix-current-directory)
+            (declare (ignore _))
+            dir)
+  #+lispworks (hcl:get-working-directory)
+  #+sbcl (sb-posix:getcwd)
+  #-(or allegro clisp cmucl lispworks sbcl)
+  (error "lisp implementation not supported"))
+
 ; cd into repository
 ; TODO: do something portable
 (defmacro in-directory (dir &body body) 
   "Set the current directory to DIR in BODY"
   (let ((cwd (gensym)))
-    `(let ((,cwd (sb-posix:getcwd)))
-       (sb-posix:chdir (truename ,dir))
+    `(let ((,cwd (getcwd)))
+       (chdir (truename ,dir))
        (prog1 ,@body
-         (sb-posix:chdir (truename ,cwd))))))
+         (chdir (truename ,cwd))))))
 
 (defun wait-process (process)
   "Loop until the state of PROCESS isn't :RUNNING anymore"
