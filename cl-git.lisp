@@ -14,6 +14,10 @@
    (cmd :initarg :cmd
 	:reader cmd)))
 
+(defmethod print-object ((object git-error) stream)
+  (print-unreadable-object (object stream)
+    (format stream "~a" (text object))))
+
 (define-condition break-limit-reached (error)
   ((text :initarg :text
 	 :reader text)))
