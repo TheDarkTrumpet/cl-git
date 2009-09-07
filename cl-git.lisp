@@ -42,14 +42,14 @@
 	 (format out "~a" x))))
 
 ; cd into repository
-; TODO: is *default-pathname-defaults* portable?
-; TODO: *default-pathname-defaults* don't change anything
+; TODO: do something portable
 (defmacro in-directory (dir &body body) 
   "Set the current directory to DIR in BODY"
-  ;`(let ((*default-pathname-defaults* (truename ,dir)))
-  `(progn
-     (sb-posix:chdir ,dir)
-     ,@body))
+  (let ((cwd (gensym)))
+    `(let ((,cwd (sb-posix:getcwd)))
+       (sb-posix:chdir (truename ,dir))
+       (prog1 ,@body
+         (sb-posix:chdir (truename ,cwd))))))
 
 (defun wait-process (process)
   "Loop until the state of PROCESS isn't :RUNNING anymore"
