@@ -38,49 +38,40 @@
 	 (format out "~a" x))))
 
 ; cd into repository
-; Error is : "can't cd to ...." <-- do a regexp on this.
-; Success is nothing...that doesn't help.
-(defun cd-into-repo (instream repodir) 
-  (format instream "cd ~a~%" repodir)
-  (force-output instream))
+; TODO: is *default-pathname-defaults* portable?
+; TODO: *default-pathname-defaults* don't change anything
+(defmacro in-directory (dir &body body) 
+  "Set the current directory to DIR in BODY"
+  ;`(let ((*default-pathname-defaults* (truename ,dir)))
+  `(progn
+     (sb-posix:chdir ,dir)
+     ,@body))
 
-(defun verify-git-error (return-code stroutput cmd)
-  (when (not (= return-code 0)) 
-    (error 'git-error 
-           :cmd cmd 
-           :text (with-output-to-string (s)
-                   (format s "Does not exist: ~a" stroutput)))))
+(defun wait-process (process)
+  "Loop until the state of PROCESS isn't :RUNNING anymore"
+  (loop for status = (process-status process)
+        until (not (eql status :running))))
 
-; return the last return code (echo $?)
-(defun get-last-return-code (instream outstream)
-  (format instream "echo $?~%")
-  (force-output instream)
-  (parse-integer (get-from-shell outstream) :junk-allowed t))
+(defun verify-error (process args error-stream)
+  "Wait the end of PROCESS and check the exit-code, raise a GIT-ERROR when 
+   the exit-code is different from 0"
+  (multiple-value-bind (status exit-code) (process-status process)
+    (if (not (eql status :running))
+      (when (not (= exit-code 0))
+        (error 'git-error
+               :cmd (format nil "git ~{~a~}" args)
+               :text (get-from-shell error-stream)))
+      (progn (wait-process process)
+             (verify-error process args error-stream)))))
 
-;Wrapper for the actual git command.
-(defun exec-git-cmd (instream outstream err cmd args)
-  (format instream "git ~a ~a~%" cmd args)
-  (force-output instream)
-  (prog1
-    (get-from-shell outstream)
-    (verify-git-error (get-last-return-code instream outstream) err cmd)))
-
-;Create the base stream, set input/output streams as needed.
-(defun run-base-sh ()
-  (let* ((stream (start "/bin/sh" () 
-                        :output :stream 
-                        :input :stream 
-                        :error :stream ))
-         (input (process-input-stream stream))
-         (output (process-output-stream stream))
-         (err (process-error-stream stream)))
-    (values input output err)))
 
 ;What the users of this library will use.
-(defun git (repodir cmd &optional (args ""))
-  (multiple-value-bind (input output err) (run-base-sh)
-    (cd-into-repo input repodir)
-    (prog1 
-      (exec-git-cmd input output err cmd args)
-      (format input "exit~%")
-      (force-output input))))
+(defun git (repodir &optional (args '()))
+  (in-directory repodir
+    (let* ((process (start "git" args 
+                          :output :stream
+                          :error :stream))
+           (output (process-output-stream process))
+           (err (process-error-stream process)))
+      (verify-error process args err)
+      (get-from-shell output))))
